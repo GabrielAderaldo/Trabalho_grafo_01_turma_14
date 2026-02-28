@@ -9,20 +9,23 @@ ALGS4_CLASSES_DIR := $(BUILD_DIR)/algs4-classes
 JAVA ?= java
 JAVAC ?= javac
 MAIN ?= Main
-DEV_MAIN ?= main
+DEV_MAIN ?= app.Main
 ARGS ?=
 
 APP_SOURCES := $(shell find $(SRC_DIR) -type f -name '*.java' 2>/dev/null)
 
-.PHONY: help check-algs4 setup classes run run-data dev clean
+.PHONY: help check-algs4 setup classes run run-data dev test test-all generate clean
 
 help:
 	@echo "Targets disponiveis:"
 	@echo "  make setup                 # compila a biblioteca algs4 para build/algs4-classes"
 	@echo "  make classes               # compila seu codigo Java em src/ para build/classes"
-	@echo "  make dev                   # atalho para compilar e executar (default: main)"
+	@echo "  make generate              # gera data/generated/facebook_union.txt"
+	@echo "  make dev                   # atalho para compilar e executar (default: app.Main)"
 	@echo "  make run MAIN=SeuMain      # executa a classe principal (default: Main)"
 	@echo "  make run-data MAIN=SeuMain DATA=arquivo.txt"
+	@echo "  make test                  # executa EdgeListConverterTest"
+	@echo "  make test-all              # executa TODOS os testes unitarios"
 	@echo "  make clean                 # remove pasta build/"
 
 check-algs4:
@@ -62,6 +65,29 @@ run-data: classes
 
 dev:
 	@$(MAKE) run MAIN="$(DEV_MAIN)" ARGS="$(ARGS)"
+
+test: classes
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListConverterTest
+
+test-all: classes
+	@echo "Executando suite de testes completa..."
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.DegreeStatsTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.ConnectivityTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.BipartiteTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjListTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjacencyListVisualTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjacencyMatrixTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.IncidenceMatrixTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.CSRTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjMatrixBinaryTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.IncidenceBinaryTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListBinaryTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.DegreeDistributionTest || true
+
+generate: classes
+	@echo "Iniciando geracao do dataset para algs4..."
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" utils.EdgeListConverter
 
 clean:
 	@rm -rf "$(BUILD_DIR)"
