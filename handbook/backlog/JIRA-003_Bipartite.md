@@ -8,6 +8,8 @@ Implementar o algoritmo de 2-coloração para determinar se o grafo é bipartido
 - Utilizar DFS para propagar as cores.
 - Se um vizinho já estiver marcado e tiver a mesma cor que o vértice atual, o grafo NÃO é bipartido.
 
+## 🚨 Alerta de Correção (Gabriel)
+O método `checkBipartite` precisa obrigatoriamente de `marked[v] = true;` na primeira linha do corpo da função. Sem isso, o DFS entrará em loop infinito em grafos reais.
+
 ## Definição de Pronto (DoD)
-- O código deve passar no teste `src/tests/BipartiteTest.java`.
-- O teste valida um Quadrado (Bipartido) e um Triângulo (Não Bipartido).
+- Passar no teste `tests.BipartiteTest` sem travar o computador.

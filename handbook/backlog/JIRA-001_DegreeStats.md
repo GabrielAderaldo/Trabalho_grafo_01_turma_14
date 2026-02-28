@@ -5,10 +5,8 @@ Implementar manualmente o cálculo de graus (mínimo, máximo e médio) percorre
 
 ## Requisitos
 - Implementar os métodos na classe `app.FacebookGraph`:
-  - `maxDegree()`: Retorna o maior grau.
-  - `minDegree()`: Retorna o menor grau.
-  - `avgDegree()`: Retorna a média (sum / V).
-  - `density()`: Retorna `2.0 * E / (V * (V-1))`.
+  - `maxDegree()`, `minDegree()`, `avgDegree()`.
+- **🚨 RESTRIÇÃO CRÍTICA:** É proibido o uso de `G.degree(v)`. O grau deve ser calculado iterando manualmente sobre `G.adj(v)` para satisfazer o requisito pedagógico de "implementação do zero".
 
 ## Definição de Pronto (DoD)
-- O código deve passar no teste `src/tests/DegreeStatsTest.java`.
+- Passar no teste `tests.DegreeStatsTest`.

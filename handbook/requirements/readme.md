@@ -1,38 +1,19 @@
-# Requisitos do Trabalho - Unidade I
+# Diretrizes do Trabalho: Grafos de Escala Livre (SNAP)
 
-Este documento detalha os requisitos pedagógicos da Unidade I e mapeia como eles são atendidos pelas tarefas técnicas do projeto.
+Este documento detalha os requisitos da Unidade I, focados na caracterização estrutural de redes reais e investigação da hipótese de **escala livre**.
 
-## 📋 Escopo Mínimo e Evidências
+## 📋 Requisitos Técnicos Obrigatórios (Restrição Pedagógica)
 
-Conforme as diretrizes da disciplina, o projeto deve entregar as seguintes evidências estatísticas e estruturais:
+### 1. Métricas de Base (Manual)
+*   **Ordem $|V|$ e Tamanho $|E|$**: Extração direta da estrutura.
+*   **Cálculo de Graus**: 
+    - **🚨 PROIBIÇÃO:** Não é permitido o uso de `G.degree(v)`.
+    - **DESAFIO:** O aluno deve implementar um iterador que percorre a lista de adjacência e conta os elementos manualmente para determinar o grau de cada nó.
+*   **Densidade**: Aplicação da fórmula matemática fundamental.
 
-| Requisito Pedagógico | Implementação Técnica | Tarefa Relacionada |
-| :--- | :--- | :--- |
-| **Número de Vértices (Ordem)** | `G.V()` no Wrapper `FacebookGraph` | `JIRA-001` |
-| **Número de Arestas (Tamanho)** | `G.E()` no Wrapper `FacebookGraph` | `JIRA-001` |
-| **Cálculo de Densidade** | Método `density()` (Manual) | `JIRA-001` |
-| **Grau Médio / Máximo / Mínimo** | Métodos `degree` (Manual) | `JIRA-001` |
-| **Distribuição de Graus** | Lógica de Frequência no `Main.java` | `TASK-002` |
-| **Conectividade** | DFS Manual para Componentes Conexos | `JIRA-002` |
-| **Bipartição** | Algoritmo de 2-Coloração Manual | `JIRA-003` |
-| **Vizinhança** | Iteração sobre Listas de Adjacência | `JIRA-004` |
+### 2. Algoritmos de Estrutura (Referência: algs4.cs.princeton.edu)
+As implementações de **Conectividade** e **Bipartição** devem seguir o modelo de algoritmos de busca em grafos (DFS/BFS) sem o uso das classes prontas da biblioteca.
 
-## 💻 Representações Computacionais
-
-O trabalho exige a demonstração de diferentes formas de representar o grafo na memória. Implementamos as 4 principais:
-
-1.  **Lista de Adjacência:** Representação nativa via `algs4.Graph` e exportação via **CSR (Compressed Sparse Row)** para alta performance. (`JIRA-008`)
-2.  **Matriz de Adjacência:** Implementação em array `boolean[][]` e exportação compacta via **Bitset**. (`JIRA-009`)
-3.  **Matriz de Incidência:** Representação Vértice-Aresta com exportação em **Binário Esparso**. (`JIRA-010`)
-4.  **Lista de Arestas:** Representação bruta em `int[][]` e exportação em **Binário de Largura Fixa**. (`JIRA-012`)
-
-## 🎯 Mapa Didático-Metodológico
-
--   **Abordagem:** TDD (Test-Driven Development). Cada algoritmo manual possui um teste unitário em `src/tests/` para garantir a correção lógica sem depender de bibliotecas prontas para os cálculos finais.
--   **Dataset:** Dados reais do Facebook (SNAP), processados pelo utilitário `EdgeListConverter` para compatibilidade com a biblioteca `algs4`.
--   **Eficiência:** Foco em economia de memória (Uso de primitivos `boolean` e formatos binários compactos).
-
-## 🚫 Delimitações (O que NÃO fazer nesta fase)
--   Não antecipar algoritmos de busca de caminho (Dijkstra, A*).
--   Não focar em fluxos de rede.
--   Focar exclusivamente em **Modelagem, Representação e Estatística Descritiva**.
+### 3. Análise de Escala Livre (Notebook)
+*   Produção de histogramas e análise de regressão para verificar a **Lei de Potência**.
+*   Justificativa teórica baseada em Network Science (Barabási).

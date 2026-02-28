@@ -1,31 +1,29 @@
-# Status do Projeto - Unidade I
+# Status do Projeto - Unidade I (Foco: Ciência de Dados)
 
-Este documento mapeia o progresso do trabalho e as responsabilidades de cada membro.
+O projeto entrou na fase de **Análise Estatística**. O Java fornece a infraestrutura de dados e o Notebook Jupyter realiza a caracterização científica.
 
-## ✅ Concluído
-| ID | Tarefa | Responsável | Status |
-| :--- | :--- | :--- | :--- |
-| TASK-001 | Conversor de Dataset (EdgeListConverter) | Grupo | Finalizado |
-| JIRA-004 | Mapeamento de Vizinhança | Grupo | Finalizado |
-| JIRA-005 | Matriz de Adjacência | Grupo | Finalizado |
-| JIRA-006 | Matriz de Incidência | Grupo | Finalizado |
-| JIRA-007 | Visualização Textual (toString) | Grupo | Finalizado |
-| JIRA-008 | Exportação CSR (Binário) | Grupo | Finalizado |
-| JIRA-009 | Exportação Matriz Adjacência (Bitset) | Grupo | Finalizado |
-| JIRA-010 | Exportação Matriz Incidência (Esparsa) | Grupo | Finalizado |
-| JIRA-011 | Lista de Arestas (Edge List) | Grupo | Finalizado |
-| JIRA-012 | Exportação Edge List (Binário) | Grupo | Finalizado |
+## 🟢 Concluído (Infraestrutura)
+| ID | Tarefa | Status |
+| :--- | :--- | :--- |
+| TASK-001 | Conversor de Dataset | **OK** |
+| JIRA-002 | Conectividade (DFS) | **OK** |
+| JIRA-005..12 | Representações e Binários | **OK** |
+| Util | DataExporter (Camada de I/O) | **OK** |
 
-## ⏳ Pendente (Aguardando Implementação)
-| ID | Tarefa | Responsável | Arquivo | Teste de Validação |
-| :--- | :--- | :--- | :--- | :--- |
-| JIRA-001 | Estatísticas de Graus e Densidade | **Artur** | FacebookGraph.java | `tests.DegreeStatsTest` |
-| JIRA-002 | Conectividade (DFS Manual) | **Gabriel** | FacebookGraph.java | `tests.ConnectivityTest` |
-| JIRA-003 | Bipartição (Coloração) | **Gabriel** | FacebookGraph.java | `tests.BipartiteTest` |
+## ⏳ Pendente - Responsabilidades de Equipe
 
-## 🚀 Como Validar o Trabalho
-Sempre que implementar uma função, rode o comando:
-```bash
-make test-all
-```
-O objetivo é que todos os testes apareçam como **[OK]**.
+### 👤 Arthur Alves (Métricas e Lei de Potência)
+| ID | Tarefa | Objetivo |
+| :--- | :--- | :--- |
+| **JIRA-001** | Métricas Manuais (Java) | Implementar cálculos de grau **do zero** (sem `G.degree`). |
+| **Notebook** | Análise de Escala Livre | Realizar o ajuste de **Lei de Potência** no Python. |
+| **Relatório** | Estudo de Influência | Analisar o usuário de maior grau e sua relevância na rede. |
+
+### 👤 Lucas Magalhães (Topologia e Visualização)
+| ID | Tarefa | Objetivo |
+| :--- | :--- | :--- |
+| **Notebook** | Visualização Log-Log | Criar os gráficos de distribuição de graus (Linear e Log-Log). |
+| **Relatório** | Classificação Teórica | Provar se o grafo é Planar, Regular ou Completo. |
+
+## 🚀 Entrega Obrigatória: Notebook (.ipynb)
+O Arthur e o Lucas devem colaborar no arquivo `notebooks/analise_facebook.ipynb` para consolidar os resultados.

@@ -75,7 +75,6 @@ test-all: classes
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.ConnectivityTest || true
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.BipartiteTest || true
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjListTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjacencyListVisualTest || true
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjacencyMatrixTest || true
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.IncidenceMatrixTest || true
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListTest || true
@@ -83,7 +82,8 @@ test-all: classes
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjMatrixBinaryTest || true
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.IncidenceBinaryTest || true
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListBinaryTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.DegreeDistributionTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.RawDegreeExportTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.DataExporterTest || true
 
 generate: classes
 	@echo "Iniciando geracao do dataset para algs4..."

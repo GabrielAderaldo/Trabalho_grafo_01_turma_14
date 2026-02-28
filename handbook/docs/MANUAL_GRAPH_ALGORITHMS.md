@@ -1,82 +1,35 @@
-# Guia de Implementação Manual: Algoritmos de Grafos
+# Guia Teórico: Algoritmos de Busca e Classificação
 
-Este guia explica como implementar as métricas do seu trabalho sem usar as classes prontas (`CC`, `Bipartite`) da `algs4`.
+Para implementar os requisitos, utilizem como base o livro "Algorithms, 4th Edition" (Sedgewick & Wayne). Link: [algs4.cs.princeton.edu/40graphs/](https://algs4.cs.princeton.edu/40graphs/)
 
-## 1. Estatísticas de Grau (Manual)
-Em vez de `G.degree(v)`, você pode contar os elementos no iterador:
-
-```java
-int grau = 0;
-for (int w : G.adj(v)) {
-    grau++;
-}
+## 1. Estatísticas de Grau (Contagem Manual)
+Para cada vértice `v`, você deve obter o iterador de adjacência e percorrê-lo:
+```text
+integer degree_count = 0
+for each neighbor w in adjacency_of(v):
+    degree_count = degree_count + 1
+return degree_count
 ```
 
-## 2. Conectividade (DFS Manual)
-Para saber se o grafo é conexo e contar os componentes:
-
-```java
-// No seu Main.java ou em uma classe auxiliar:
-boolean[] marked = new boolean[G.V()];
-int componentes = 0;
-
-for (int v = 0; v < G.V(); v++) {
-    if (!marked[v]) {
-        componentes++;
-        dfs(G, v, marked);
-    }
-}
-
-// Método DFS recursivo:
-private static void dfs(Graph G, int v, boolean[] marked) {
-    marked[v] = true;
-    for (int w : G.adj(v)) {
-        if (!marked[w]) {
-            dfs(G, w, marked);
-        }
-    }
-}
+## 2. Busca em Profundidade (DFS)
+Base para a Conectividade (JIRA-002).
+```text
+dfs(G, v):
+    marked[v] = true
+    for each w in adj(v):
+        if (!marked[w]):
+            dfs(G, w)
 ```
 
-## 3. Bipartição (2-Coloração Manual)
-Para verificar se o grafo é bipartido:
-
-```java
-boolean[] marked = new boolean[G.V()];
-boolean[] color = new boolean[G.V()];
-boolean isBipartite = true;
-
-for (int v = 0; v < G.V(); v++) {
-    if (!marked[v]) {
-        if (!checkBipartite(G, v, marked, color)) {
-            isBipartite = false;
-            break;
-        }
-    }
-}
-
-// Método de verificação (DFS com cores):
-private static boolean checkBipartite(Graph G, int v, boolean[] marked, boolean[] color) {
-    marked[v] = true;
-    for (int w : G.adj(v)) {
-        if (!marked[w]) {
-            color[w] = !color[v]; // Atribui a cor oposta
-            if (!checkBipartite(G, w, marked, color)) return false;
-        } else if (color[w] == color[v]) {
-            return false; // Vizinhos com a mesma cor!
-        }
-    }
-    return true;
-}
+## 3. Duas-Coloração (Bipartição)
+Base para a JIRA-003. O algoritmo tenta atribuir cores alternadas. Se encontrar vizinhos com a mesma cor, o grafo contém um ciclo ímpar.
+```text
+dfs_bipartite(G, v, color):
+    marked[v] = true
+    for each w in adj(v):
+        if (!marked[w]):
+            color[w] = !color[v]
+            dfs_bipartite(G, w, color)
+        else if (color[w] == color[v]):
+            isBipartite = false
 ```
-
-## 4. Densidade
-A fórmula manual que você deve usar no `Main.java`:
-```java
-double v = G.V();
-double e = G.E();
-double densidade = (2.0 * e) / (v * (v - 1));
-```
-
-## 5. Vizinhança
-Para listar a vizinhança de um vértice `v`, basta iterar sobre `G.adj(v)` e imprimir os valores.
