@@ -1,186 +1,93 @@
 # Trabalho de Grafos - Turma 14
 
-Repositorio da disciplina para analise de grafos com dataset do SNAP (Facebook ego networks) e biblioteca `algs4` (Princeton).
+Repositorio da disciplina para analise de grafos com o dataset do SNAP (Facebook ego networks) e a biblioteca `algs4` (Princeton).
 
-## Visao geral
+---
 
-Este repositorio contem:
-- dataset em `data/facebook`;
-- requisitos do trabalho em `handbook/requesitos_trabalho`;
-- biblioteca `algs4` como submodule em `lib/algs4`;
-- automacao de compilacao/execucao com `Makefile`;
-- ambiente padrao com Docker (`Dockerfile`).
+## 🏗️ Estrutura do Projeto
 
-## Pre-requisitos (local)
-
-Instale:
-- `git`
-- `make`
-- `java`/`javac` (JDK 17+ recomendado)
-
-Validacao:
-
-```bash
-git --version
-make --version
-java -version
-javac -version
-```
-
-## Clone correto (obrigatorio)
-
-A `algs4` e um **git submodule**. Se nao baixar submodule, nao compila.
-
-Clone recomendado:
-
-```bash
-git clone --recurse-submodules <URL_DO_REPO>
-cd tg01_14
-```
-
-Se ja clonou sem submodule:
-
-```bash
-git submodule update --init --recursive
-```
-
-## Estrutura principal
+O projeto está organizado seguindo padrões de engenharia de software:
 
 ```text
 .
 ├── data/
-│   ├── readme.md
-│   └── facebook/
+│   ├── facebook/               # Dataset original do SNAP
+│   ├── union_data_facebook/    # Arquivo de união (entrada)
+│   └── generated/              # Arquivos processados e exportações binárias
 ├── handbook/
-│   └── requesitos_trabalho/
-├── lib/
-│   └── algs4/
+│   ├── backlog/                # Cards JIRA com tarefas pendentes e concluídas
+│   ├── docs/                   # Referências técnicas e tutoriais
+│   └── requirements/           # Requisitos pedagógicos do professor
 ├── src/
-│   └── main.java
-├── Makefile
-└── Dockerfile
+│   ├── app/                    # Código principal (Main e FacebookGraph Wrapper)
+│   ├── utils/                  # Utilitários (EdgeListConverter)
+│   └── tests/                  # Suite de testes unitários (Critérios de Aceite)
+├── Makefile                    # Automação de compilação e testes
+└── README.md                   # Este guia
 ```
 
-## Inicio rapido (jeito mais simples)
+---
 
-Com o projeto clonado corretamente:
+## 🚀 Fluxo de Trabalho (Para a Equipe)
 
+Este projeto utiliza **TDD (Test-Driven Development)**. Cada funcionalidade do trabalho possui um teste unitário e um card no backlog.
+
+### 1. Preparação dos Dados
+Antes de qualquer coisa, você precisa gerar o arquivo que a biblioteca `algs4` consegue ler:
 ```bash
-make dev
+make generate
 ```
+Isso criará o arquivo `data/generated/facebook_union.txt` com o cabeçalho V e E.
 
-Isso compila `algs4`, compila seu codigo em `src/` e executa a classe configurada no modo dev.
+### 2. Implementação
+Toda a lógica de algoritmos manuais deve ser escrita na classe:
+👉 `src/app/FacebookGraph.java`
 
-No estado atual do repo, o `dev` executa `main` (arquivo `src/main.java`).
+Consulte os cards em `handbook/backlog/` para saber o que implementar (Ex: JIRA-001, JIRA-002...).
 
-## Comandos do Makefile
-
-### `make help`
-Mostra todos os targets.
-
-### `make setup`
-Compila `algs4` para `build/algs4-classes`.
-
-### `make classes`
-Compila arquivos `.java` de `src/` para `build/classes`.
-
-### `make dev`
-Atalho estilo `npm run dev`.
-
-Por padrao executa `DEV_MAIN=main`.
-
-Exemplo com argumentos:
-
+### 3. Validação (Testes)
+Para verificar se sua implementação está correta e atende aos requisitos do professor, rode:
 ```bash
-make dev ARGS="--ego 0 --edges data/facebook/0.edges"
+make test-all
 ```
+**O objetivo do grupo é deixar todos os testes em VERDE (PASSED).**
 
-### `make run MAIN=...`
-Executa uma classe especifica.
+---
 
-Exemplos:
+## 🛠️ Comandos Principais do Makefile
 
-```bash
-make run MAIN=main
-make run MAIN=Main
-make run MAIN=br.unifor.grafos.Main
-```
+| Comando | Descrição |
+| :--- | :--- |
+| `make setup` | Compila a biblioteca base `algs4`. |
+| `make classes` | Compila todo o código da pasta `src/`. |
+| `make generate` | Executa o conversor de dataset para o formato `algs4`. |
+| `make test-all` | **(Importante)** Executa todos os testes unitários do projeto. |
+| `make dev` | Executa a classe `app.Main` para ver o relatório final. |
+| `make clean` | Limpa os arquivos de compilação. |
 
-### `make run-data MAIN=... DATA=...`
-Executa classe lendo entrada via `stdin`.
+---
 
-Exemplo:
+## 📋 Responsabilidades Mapeadas
 
-```bash
-make run-data MAIN=main DATA=data/facebook/0.edges
-```
+Consulte o arquivo `handbook/PROJECT_STATUS.md` para ver quem é o responsável por cada método no `FacebookGraph.java`.
 
-### `make clean`
-Remove pasta `build/`.
+-   **Estatísticas e Graus:** Artur
+-   **Conectividade e Bipartição:** Gabriel
+-   **Representações e Binários:** Implementado (Revisar se necessário)
 
-## Usando Docker
+---
 
-### Build da imagem
+## 🐳 Docker (Opcional)
 
+Se preferir rodar em um ambiente isolado:
 ```bash
 docker build -t tg01_14-java .
+docker run --rm -it -v "$PWD":/app -w /app tg01_14-java make test-all
 ```
 
-### Rodar com bind mount (recomendado para desenvolvimento)
+---
 
-```bash
-docker run --rm -it -v "$PWD":/app -w /app tg01_14-java make dev
-```
-
-Outros exemplos:
-
-```bash
-docker run --rm -it -v "$PWD":/app -w /app tg01_14-java make classes
-docker run --rm -it -v "$PWD":/app -w /app tg01_14-java make run MAIN=main
-```
-
-## Dataset (`data/facebook`)
-
-Para cada `nodeId`, existem 5 arquivos:
-- `nodeId.edges`: arestas entre amigos do ego (Facebook: nao-direcionado).
-- `nodeId.circles`: circulos (ground-truth).
-- `nodeId.feat`: features binarias dos nos.
-- `nodeId.egofeat`: features binarias do ego.
-- `nodeId.featnames`: nomes das dimensoes de feature (anonimizadas no Facebook).
-
-## Regras para a equipe
-
-- Coloque seu codigo Java em `src/`.
-- Nao altere `data/facebook`.
-- Nao altere manualmente `lib/algs4` (dependencia externa via submodule).
-- Nao versione artefatos de build (`build/`).
-
-## Problemas comuns
-
-### Erro: `algs4 nao encontrada`
-
-```bash
-git submodule update --init --recursive
-```
-
-### Erro: `Nenhum arquivo .java encontrado em src/`
-
-Crie arquivos `.java` em `src/`.
-
-### Erro: `Could not find or load main class ...`
-
-Confira exatamente o nome da classe:
-- classe atual do repo: `main` (minusculo)
-- se criar outra classe, ajuste `MAIN`/`DEV_MAIN` no comando
-
-Exemplo:
-
-```bash
-make run MAIN=main
-make dev DEV_MAIN=Main
-```
-
-## Referencias
-
-- SNAP: https://snap.stanford.edu/data/
-- algs4: https://github.com/kevin-wayne/algs4
+## 📚 Referências
+- **SNAP Dataset:** [https://snap.stanford.edu/data/](https://snap.stanford.edu/data/)
+- **algs4 Library:** [https://github.com/kevin-wayne/algs4](https://github.com/kevin-wayne/algs4)
+- **Documentação Local:** Veja os guias em `handbook/docs/`.
