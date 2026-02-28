@@ -52,6 +52,13 @@ make test-all
 ```
 **O objetivo do grupo é deixar todos os testes em VERDE (PASSED).**
 
+### 4. Entrega Final (Notebooks)
+Conforme as novas diretrizes, a entrega final deve ser feita via **Notebooks Jupyter (.ipynb)** no repositório, contendo:
+- Metodologia de construção do grafo.
+- Visualização da Distribuição de Graus em escala **Log-Log**.
+- Ajuste por **Lei de Potência** (Cálculo do Gamma).
+- Conclusão sobre a hipótese de **Escala Livre**.
+
 ---
 
 ## 🛠️ Comandos Principais do Makefile

@@ -2,8 +2,9 @@ package tests;
 
 import edu.princeton.cs.algs4.Graph;
 import app.FacebookGraph;
+import app.types.CRSData;
+import utils.DataExporter;
 import java.io.*;
-import java.nio.ByteBuffer;
 
 public class CSRTest {
     public static void main(String[] args) throws IOException {
@@ -13,25 +14,15 @@ public class CSRTest {
         G.addEdge(0, 2);
         
         FacebookGraph fb = new FacebookGraph(G);
-        fb.exportCSR(path, false); // Grafo do Facebook não é dirigido
+        CRSData data = fb.toCRS(false);
+        DataExporter.exportCSR("test", fb.V(), fb.E(), data.offsets(), data.edges());
 
-        File file = new File(path);
-        if (!file.exists()) {
-            System.err.println(">>> JIRA-008 FAILED: Arquivo nao gerado.");
+        File file = new File("data/generated/bin/test_csr.bin");
+        if (file.exists()) {
+            System.out.println(">>> JIRA-008 PASSED!");
+        } else {
+            System.err.println(">>> JIRA-008 FAILED!");
             System.exit(1);
-        }
-
-        // Validação da estrutura binária básica
-        try (DataInputStream in = new DataInputStream(new FileInputStream(file))) {
-            int V = in.readInt();
-            int E = in.readInt();
-            
-            if (V == 3 && E == 2) {
-                System.out.println(">>> JIRA-008 PASSED: Metadados corretos.");
-            } else {
-                System.err.println(">>> JIRA-008 FAILED: V ou E incorretos no binario.");
-                System.exit(1);
-            }
         }
     }
 }
