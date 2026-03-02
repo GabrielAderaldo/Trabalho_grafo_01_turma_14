@@ -4,73 +4,56 @@ Repositorio da disciplina para analise de grafos com o dataset do SNAP (Facebook
 
 ---
 
+## ⚡ Quick Start (Configuração em Um Clique)
+
+Se você acabou de clonar o repositório, rode o script de bootstrap para configurar **Java, Python (venv) e o Dataset** automaticamente:
+
+**No Mac ou Linux:**
+```bash
+./scripts/bootstrap.sh
+```
+
+**No Windows (PowerShell):**
+```powershell
+./scripts/bootstrap.ps1
+```
+
+*O que isso faz? Instala dependências do Python no `venv`, baixa submodules, compila o código Java e gera o dataset real do Facebook.*
+
+---
+
 ## 🏗️ Estrutura do Projeto
-
-O projeto está organizado seguindo padrões de engenharia de software:
-
-```text
-.
-├── data/
-│   ├── facebook/               # Dataset original do SNAP
-│   ├── union_data_facebook/    # Arquivo de união (entrada)
-│   └── generated/              # Arquivos processados e exportações binárias
-├── handbook/
-│   ├── backlog/                # Cards JIRA com tarefas pendentes e concluídas
-│   ├── docs/                   # Referências técnicas e tutoriais
-│   └── requirements/           # Requisitos pedagógicos do professor
-├── src/
-│   ├── app/                    # Código principal (Main e FacebookGraph Wrapper)
-│   ├── utils/                  # Utilitários (EdgeListConverter)
-│   └── tests/                  # Suite de testes unitários (Critérios de Aceite)
-├── Makefile                    # Automação de compilação e testes
-└── README.md                   # Este guia
+...
+├── notebooks/              # Guia de importação e Notebook de Análise (.ipynb)
+├── scripts/                # Scripts de configuração (Bootstrap)
+├── Taskfile.yml            # Automação moderna (Alternativa ao Makefile)
+├── requirements.txt        # Dependências do Python (Data Science)
+...
 ```
 
 ---
 
 ## 🚀 Fluxo de Trabalho (Para a Equipe)
-
-Este projeto utiliza **TDD (Test-Driven Development)**. Cada funcionalidade do trabalho possui um teste unitário e um card no backlog.
-
-### 1. Preparação dos Dados
-Antes de qualquer coisa, você precisa gerar o arquivo que a biblioteca `algs4` consegue ler:
-```bash
-make generate
-```
-Isso criará o arquivo `data/generated/facebook_union.txt` com o cabeçalho V e E.
-
-### 2. Implementação
-Toda a lógica de algoritmos manuais deve ser escrita na classe:
-👉 `src/app/FacebookGraph.java`
-
-Consulte os cards em `handbook/backlog/` para saber o que implementar (Ex: JIRA-001, JIRA-002...).
-
-### 3. Validação (Testes)
-Para verificar se sua implementação está correta e atende aos requisitos do professor, rode:
-```bash
-make test-all
-```
-**O objetivo do grupo é deixar todos os testes em VERDE (PASSED).**
-
+...
 ### 4. Entrega Final (Notebooks)
-Conforme as novas diretrizes, a entrega final deve ser feita via **Notebooks Jupyter (.ipynb)** no repositório, contendo:
-- Metodologia de construção do grafo.
-- Visualização da Distribuição de Graus em escala **Log-Log**.
-- Ajuste por **Lei de Potência** (Cálculo do Gamma).
-- Conclusão sobre a hipótese de **Escala Livre**.
+O time de Data Science deve utilizar o ambiente virtual criado pelo bootstrap:
+1. Ative o ambiente: `source venv/bin/activate` (Mac/Linux) ou `.\venv\Scripts\Activate.ps1` (Windows).
+2. Abra o Jupyter: `jupyter-lab`.
+3. Utilize o notebook base em `notebooks/analise_facebook.ipynb` que já possui a infra de carga pronta.
 
 ---
 
-## 🛠️ Comandos Principais do Makefile
+## 🛠️ Comandos de Automação (Make ou Task)
+
+Você pode usar tanto o `make` quanto o `task` (recomendado para Windows):
 
 | Comando | Descrição |
 | :--- | :--- |
-| `make setup` | Compila a biblioteca base `algs4`. |
-| `make classes` | Compila todo o código da pasta `src/`. |
-| `make generate` | Executa o conversor de dataset para o formato `algs4`. |
-| `make test-all` | **(Importante)** Executa todos os testes unitários do projeto. |
-| `make dev` | Executa a classe `app.Main` para ver o relatório final. |
-| `make clean` | Limpa os arquivos de compilação. |
+| `make run-full` | **(Dataset Real)** Executa a análise nos 4039 usuários e gera dados para o Notebook. |
+| `make test-all` | Executa todos os 18 testes unitários do projeto. |
+| `make test-notebook`| Valida apenas a geração de artefatos para o Data Science. |
+| `make generate` | Prepara o arquivo `facebook_union.txt` para a `algs4`. |
+...
 
 ---
 
