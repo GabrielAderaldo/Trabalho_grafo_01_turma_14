@@ -85,8 +85,12 @@ public class FacebookGraph {
      * @return the density as a double between 0 and 1
      */
     public double density() {
-        // TODO: Implementar manualmente (Arthur Alves)
-        return 0.0;
+    int V = G.V();
+    int E = G.E();
+    
+    if (V <= 1) return 0.0;
+    
+    return (2.0 * E) / (V * (V - 1));
     }
 
     /**
@@ -96,8 +100,18 @@ public class FacebookGraph {
      * @return the maximum degree
      */
     public int maxDegree() {
-        // TODO: Implementar (Arthur Alves)
-        return 0;
+    int max = 0;
+
+    for (int v = 0; v < G.V(); v++) {
+        int degree = 0;
+        for (int w : G.adj(v)) {
+            degree++;
+        }
+        if (degree > max) {
+            max = degree;
+        }
+    }
+    return max;
     }
 
     /**
@@ -107,8 +121,20 @@ public class FacebookGraph {
      * @return the minimum degree
      */
     public int minDegree() {
-        // TODO: Implementar (Arthur Alves)
-        return 0;
+    if (G.V() == 0) return 0;
+
+    int min = Integer.MAX_VALUE;
+
+    for (int v = 0; v < G.V(); v++) {
+        int degree = 0;
+        for (int w : G.adj(v)) {
+            degree++;
+        }
+        if (degree < min) {
+            min = degree;
+        }
+    }
+    return min;
     }
 
     /**
@@ -117,8 +143,19 @@ public class FacebookGraph {
      * @return the average degree
      */
     public double avgDegree() {
-        // TODO: Implementar (Arthur Alves)
-        return 0.0;
+    if (G.V() == 0) return 0.0;
+
+    int totalDegree = 0;
+
+    for (int v = 0; v < G.V(); v++) {
+        int degree = 0;
+        for (int w : G.adj(v)) {
+            degree++;
+        }
+        totalDegree += degree;
+    }
+
+    return (double) totalDegree / G.V();
     }
 
     /**
