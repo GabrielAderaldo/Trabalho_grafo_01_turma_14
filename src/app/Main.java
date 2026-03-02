@@ -9,6 +9,7 @@ import java.util.List;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 import utils.DataExporter;
+import utils.GraphMetrics;
 import app.types.CRSData;
 
 /**
@@ -39,11 +40,20 @@ public class Main {
         // 2. Exportando Bitset
         DataExporter.toBitset("facebook", fbGraph.V(), fbGraph.toAdjacencyBitSet());
 
-        // 3. Exportando Metadados JSON
-        Map<String, Object> metrics = new HashMap<>();
-        metrics.put("v", fbGraph.V());
-        metrics.put("e", fbGraph.E());
-        DataExporter.toJSON("facebook_metrics", metrics);
+        // 3. Exportando graus brutos para análise de power law no Python
+        int[] degrees = fbGraph.degrees();
+        DataExporter.exportRawVertexDegrees("facebook", degrees);
+
+        // 4. Exportando métricas agregadas em JSON (para notebooks / Python)
+        GraphMetrics metrics = new GraphMetrics(
+            fbGraph.V(),
+            fbGraph.E(),
+            fbGraph.avgDegree(),
+            fbGraph.maxDegree(),
+            fbGraph.minDegree(),
+            fbGraph.density()
+        );
+        metrics.exportAsJson("facebook_metrics");
 
         StdOut.println(">>> Main executada com sucesso. Arquivos gerados em data/generated/");
     }

@@ -138,24 +138,42 @@ public class FacebookGraph {
     }
 
     /**
+     * Returns an array with the degree of each vertex.
+     *
+     * @return array where index v stores degree(v)
+     */
+    public int[] degrees() {
+        int V = G.V();
+        int[] degrees = new int[V];
+        for (int v = 0; v < V; v++) {
+            int degree = 0;
+            for (int w : G.adj(v)) {
+                degree++;
+            }
+            degrees[v] = degree;
+        }
+        return degrees;
+    }
+
+    /**
      * Returns the average degree of the vertices.
      *
      * @return the average degree
      */
     public double avgDegree() {
-    if (G.V() == 0) return 0.0;
+        if (G.V() == 0) return 0.0;
 
-    int totalDegree = 0;
+        int totalDegree = 0;
 
-    for (int v = 0; v < G.V(); v++) {
-        int degree = 0;
-        for (int w : G.adj(v)) {
-            degree++;
+        for (int v = 0; v < G.V(); v++) {
+            int degree = 0;
+            for (int w : G.adj(v)) {
+                degree++;
+            }
+            totalDegree += degree;
         }
-        totalDegree += degree;
-    }
 
-    return (double) totalDegree / G.V();
+        return (double) totalDegree / G.V();
     }
 
     /**
