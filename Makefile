@@ -66,8 +66,15 @@ run-data: classes
 dev:
 	@$(MAKE) run MAIN="$(DEV_MAIN)" ARGS="$(ARGS)"
 
+run-full: classes
+	@echo ">>> Executando Analise Completa (Dataset Real do Facebook)..."
+	@$(JAVA) -Xmx2G -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" app.Main
+
 test: classes
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListConverterTest
+
+test-notebook: classes
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.NotebookDataGeneratorTest
 
 test-all: classes
 	@echo "Executando suite de testes completa..."
@@ -84,6 +91,11 @@ test-all: classes
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListBinaryTest || true
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.RawDegreeExportTest || true
 	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.DataExporterTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.GraphAnalysisTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.NeighborhoodTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.UnionFileTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.NotebookDataGeneratorTest || true
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListConverterTest || true
 
 generate: classes
 	@echo "Iniciando geracao do dataset para algs4..."

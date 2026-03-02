@@ -12,6 +12,16 @@ import java.util.stream.Collectors;
  */
 public class DataExporter {
 
+    private static String outputBase = "data/generated/";
+
+    /**
+     * Define se o exportador deve operar em modo de teste.
+     * Se true, os arquivos serão salvos em data/generated/test/
+     */
+    public static void setTestMode(boolean isTest) {
+        outputBase = isTest ? "data/generated/test/" : "data/generated/";
+    }
+
     // --- MÉTODOS AUXILIARES ---
 
     /**
@@ -28,7 +38,7 @@ public class DataExporter {
     // --- FORMATOS BINÁRIOS (ALTA PERFORMANCE) ---
 
     public static void exportCSR(String nameOfFile, int V, int E, int[] offsets, int[] edges) {
-        String path = "data/generated/bin/" + nameOfFile + "_csr.bin";
+        String path = outputBase + "bin/" + nameOfFile + "_csr.bin";
         ensureDirectoryExists(path);
         try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path)))) {
             dos.writeInt(V);
@@ -41,7 +51,7 @@ public class DataExporter {
     }
 
     public static void toBitset(String nameOfFile, int V, BitSet bits) {
-        String path = "data/generated/bin/" + nameOfFile + "_adjmatrix.bin";
+        String path = outputBase + "bin/" + nameOfFile + "_adjmatrix.bin";
         ensureDirectoryExists(path);
         try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path)))) {
             dos.writeInt(V);
@@ -52,7 +62,7 @@ public class DataExporter {
     }
 
     public static void toBinaryEdgeList(String nameOfFile, int V, int E, int[][] edges) {
-        String path = "data/generated/bin/" + nameOfFile + "_edgelist.bin";
+        String path = outputBase + "bin/" + nameOfFile + "_edgelist.bin";
         ensureDirectoryExists(path);
         try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path)))) {
             dos.writeInt(V);
@@ -69,7 +79,7 @@ public class DataExporter {
     // --- FORMATOS TEXTUAIS (DATA SCIENCE / NOTEBOOK) ---
 
     public static void toCSV(String nameOfFile, String header, List<String> rows) {
-        String path = "data/generated/sheets/" + nameOfFile + ".csv";
+        String path = outputBase + "sheets/" + nameOfFile + ".csv";
         ensureDirectoryExists(path);
         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path)))) {
             if (header != null && !header.isEmpty()) out.println(header);
@@ -80,11 +90,14 @@ public class DataExporter {
     }
 
     public static void toJSON(String nameOfFile, Map<String, Object> metrics) {
-        String path = "data/generated/plain_text/" + nameOfFile + ".json";
+        String path = outputBase + "plain_text/" + nameOfFile + ".json";
         ensureDirectoryExists(path);
         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path)))) {
             String body = metrics.entrySet().stream()
-                .map(e -> String.format("  \"%s\": %s", e.getKey(), e.getValue().toString()))
+                .map(e -> {
+                    String value = e.getValue().toString().replace(',', '.');
+                    return String.format("  \"%s\": %s", e.getKey(), value);
+                })
                 .collect(Collectors.joining(",\n"));
             out.println("{\n" + body + "\n}");
         } catch (IOException e) {
@@ -93,7 +106,7 @@ public class DataExporter {
     }
 
     public static void exportRawVertexDegrees(String nameOfFile, int[] degrees) {
-        String path = "data/generated/sheets/" + nameOfFile + "_vertex_degrees.csv";
+        String path = outputBase + "sheets/" + nameOfFile + "_vertex_degrees.csv";
         ensureDirectoryExists(path);
         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path)))) {
             out.println("Vertice,Grau");
