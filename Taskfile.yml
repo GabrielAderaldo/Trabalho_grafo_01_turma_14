@@ -1,0 +1,76 @@
+version: '3'
+
+vars:
+  SRC_DIR: src
+  BUILD_DIR: build
+  CLASSES_DIR: "{{.BUILD_DIR}}/classes"
+  ALGS4_SRC_DIR: lib/algs4/src/main/java
+  ALGS4_CLASSES_DIR: "{{.BUILD_DIR}}/algs4-classes"
+  JAVA: java
+  JAVAC: javac
+  # Ajuste do Classpath para lidar com aspas em diferentes shells
+  CP: "{{.ALGS4_CLASSES_DIR}}:{{.CLASSES_DIR}}"
+
+tasks:
+  setup:
+    desc: "Compila a biblioteca algs4 para build/algs4-classes"
+    cmds:
+      - mkdir -p "{{.ALGS4_CLASSES_DIR}}"
+      - find "{{.ALGS4_SRC_DIR}}" -type f -name "*.java" | xargs {{.JAVAC}} -d "{{.ALGS4_CLASSES_DIR}}"
+    status:
+      - test -d "{{.ALGS4_CLASSES_DIR}}"
+
+  classes:
+    desc: "Compila o código Java do projeto"
+    deps: [setup]
+    cmds:
+      - mkdir -p "{{.CLASSES_DIR}}"
+      - "{{.JAVAC}} -cp {{.ALGS4_CLASSES_DIR}} -d {{.CLASSES_DIR}} $(find {{.SRC_DIR}} -name '*.java')"
+
+  generate:
+    desc: "Gera o dataset unificado do Facebook (facebook_union.txt)"
+    deps: [classes]
+    cmds:
+      - echo ">>> Iniciando geração do dataset..."
+      - "{{.JAVA}} -cp {{.CP}} utils.EdgeListConverter"
+
+  run-full:
+    desc: "Executa a análise completa no dataset real (4039 vértices)"
+    deps: [classes]
+    cmds:
+      - echo ">>> Executando Análise Completa (Dataset Real)..."
+      - "{{.JAVA}} -Xmx2G -cp {{.CP}} app.Main"
+
+  test-notebook:
+    desc: "Executa os testes do gerador de dados para o Notebook"
+    deps: [classes]
+    cmds:
+      - "{{.JAVA}} -cp {{.CP}} tests.NotebookDataGeneratorTest"
+
+  test-all:
+    desc: "Executa a suíte completa de 18 testes unitários"
+    deps: [classes]
+    cmds:
+      - "{{.JAVA}} -cp {{.CP}} tests.DegreeStatsTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.ConnectivityTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.BipartiteTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.AdjListTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.AdjacencyMatrixTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.IncidenceMatrixTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.EdgeListTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.CSRTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.AdjMatrixBinaryTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.IncidenceBinaryTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.EdgeListBinaryTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.RawDegreeExportTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.DataExporterTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.GraphAnalysisTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.NeighborhoodTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.UnionFileTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.NotebookDataGeneratorTest"
+      - "{{.JAVA}} -cp {{.CP}} tests.EdgeListConverterTest"
+
+  clean:
+    desc: "Remove a pasta build/"
+    cmds:
+      - rm -rf "{{.BUILD_DIR}}"
