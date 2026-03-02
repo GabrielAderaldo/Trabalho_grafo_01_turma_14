@@ -35,10 +35,10 @@ tasks:
       - "{{.JAVA}} -cp {{.CP}} utils.EdgeListConverter"
 
   run-full:
-    desc: "Executa a análise completa no dataset real (4039 vértices)"
+    desc: "Executa a análise completa e GERA TODOS OS ARTEFATOS (Binários, CSV, JSON) para o Notebook"
     deps: [classes]
     cmds:
-      - echo ">>> Executando Análise Completa (Dataset Real)..."
+      - echo ">>> Executando Análise Completa e Gerando Dados..."
       - "{{.JAVA}} -Xmx2G -cp {{.CP}} app.Main"
 
   test-notebook:

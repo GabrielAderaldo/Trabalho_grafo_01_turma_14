@@ -21,6 +21,7 @@ help:
 	@echo "  make setup                 # compila a biblioteca algs4 para build/algs4-classes"
 	@echo "  make classes               # compila seu codigo Java em src/ para build/classes"
 	@echo "  make generate              # gera data/generated/facebook_union.txt"
+	@echo "  make run-full              # GERA TODOS OS BINARIOS E ARTEFATOS (Data Science)"
 	@echo "  make dev                   # atalho para compilar e executar (default: app.Main)"
 	@echo "  make run MAIN=SeuMain      # executa a classe principal (default: Main)"
 	@echo "  make run-data MAIN=SeuMain DATA=arquivo.txt"

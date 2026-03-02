@@ -5,3 +5,4 @@ seaborn
 powerlaw
 networkx
 jupyterlab
+pyvis # Lib visual para grafos, útil para visualização interativa dos grafos gerados a partir do dataset do Facebook.
