@@ -94,15 +94,45 @@ public class DataExporter {
         ensureDirectoryExists(path);
         try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path)))) {
             String body = metrics.entrySet().stream()
-                .map(e -> {
-                    String value = e.getValue().toString().replace(',', '.');
-                    return String.format("  \"%s\": %s", e.getKey(), value);
-                })
+                .map(e -> String.format("  \"%s\": %s", e.getKey(), formatValue(e.getValue())))
                 .collect(Collectors.joining(",\n"));
             out.println("{\n" + body + "\n}");
         } catch (IOException e) {
             System.err.println("Erro ao exportar JSON: " + e.getMessage());
         }
+    }
+
+    /**
+     * Serializador manual recursivo para converter tipos Java em JSON.
+     */
+    private static String formatValue(Object obj) {
+        if (obj == null) return "null";
+        
+        if (obj instanceof String) {
+            return "\"" + obj.toString().replace("\"", "\\\"") + "\"";
+        }
+        
+        if (obj instanceof Boolean || obj instanceof Number) {
+            return obj.toString().replace(',', '.');
+        }
+
+        if (obj instanceof List) {
+            List<?> list = (List<?>) obj;
+            return "[" + list.stream().map(DataExporter::formatValue).collect(Collectors.joining(", ")) + "]";
+        }
+
+        if (obj.getClass().isArray()) {
+            StringBuilder sb = new StringBuilder("[");
+            int length = java.lang.reflect.Array.getLength(obj);
+            for (int i = 0; i < length; i++) {
+                sb.append(formatValue(java.lang.reflect.Array.get(obj, i)));
+                if (i < length - 1) sb.append(", ");
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+
+        return "\"" + obj.toString() + "\"";
     }
 
     public static void exportRawVertexDegrees(String nameOfFile, int[] degrees) {

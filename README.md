@@ -77,6 +77,26 @@ docker run --rm -it -v "$PWD":/app -w /app tg01_14-java make test-all
 
 ---
 
+## 🤖 Histórico de Modificações (Para Agentes de IA)
+
+Este repositório passou por uma reestruturação profunda para automação e integração de Data Science. Agentes de IA devem considerar estas mudanças para evitar conflitos:
+
+1.  **I/O Desacoplado**: A classe `src/utils/DataExporter.java` agora centraliza toda a escrita de arquivos. Ela possui um `setTestMode(boolean)` que redireciona a saída para `data/generated/test/` durante a execução de testes unitários.
+2.  **Infraestrutura de Notebook**:
+    *   `src/utils/NotebookDataGenerator.java`: Centraliza a exportação de CSVs (Pandas), JSON (Métricas) e Binários (CSR, EdgeList, Bitset).
+    *   **Endianness**: Todos os arquivos binários gerados pelo Java (`DataOutputStream`) são **Big-Endian**. No Python, deve-se usar `dtype='>i4'`.
+3.  **Automação Multiplataforma**:
+    *   Adicionado `Taskfile.yml` como alternativa ao `Makefile` para melhor suporte no Windows.
+    *   `scripts/bootstrap.sh` e `scripts/bootstrap.ps1`: Automatizam a configuração de Java, Git Submodules e Python venv.
+4.  **Integração Python**:
+    *   `requirements.txt`: Inclui `pandas`, `numpy`, `matplotlib`, `seaborn`, `powerlaw`, `networkx`, `jupyterlab` e `pyvis`.
+    *   `notebooks/analise_facebook.ipynb`: Notebook conector com infra de carga pronta.
+    *   `notebooks/guia_binarios.ipynb`: Manual técnico de manipulação de bits/bytes.
+    *   `notebooks/AGENTE_BINARIO.md`: Prompt especializado para configurar novos assistentes de IA.
+5.  **Formatação JSON**: O `DataExporter` foi atualizado com um serializador manual recursivo para converter arrays Java em listas JSON válidas e garantir o uso de ponto decimal (`Locale.US`).
+
+---
+
 ## 📚 Referências
 - **SNAP Dataset:** [https://snap.stanford.edu/data/](https://snap.stanford.edu/data/)
 - **algs4 Library:** [https://github.com/kevin-wayne/algs4](https://github.com/kevin-wayne/algs4)
