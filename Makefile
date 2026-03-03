@@ -72,31 +72,16 @@ run-full: classes
 	@$(JAVA) -Xmx2G -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" app.Main
 
 test: classes
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListConverterTest
-
-test-notebook: classes
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.NotebookDataGeneratorTest
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.IOIntegrationTest
 
 test-all: classes
-	@echo "Executando suite de testes completa..."
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.DegreeStatsTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.ConnectivityTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.BipartiteTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjListTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjacencyMatrixTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.IncidenceMatrixTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.CSRTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.AdjMatrixBinaryTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.IncidenceBinaryTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListBinaryTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.RawDegreeExportTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.DataExporterTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.GraphAnalysisTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.NeighborhoodTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.UnionFileTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.NotebookDataGeneratorTest || true
-	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.EdgeListConverterTest || true
+	@echo "Executando suite de testes unificada..."
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.GraphStructuralTest || exit 1
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.GraphRepresentationsTest || exit 1
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.GraphAlgorithmsTest || exit 1
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.DataExportTest || exit 1
+	@$(JAVA) -cp "$(ALGS4_CLASSES_DIR):$(CLASSES_DIR)" tests.IOIntegrationTest || exit 1
+	@echo ">>> TODOS OS TESTES PASSARAM COM SUCESSO!"
 
 generate: classes
 	@echo "Iniciando geracao do dataset para algs4..."

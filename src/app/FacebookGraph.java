@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
-import java.util.stream.Collectors;
 
 import app.types.CRSData;
 import edu.princeton.cs.algs4.Graph;
@@ -31,7 +29,8 @@ import edu.princeton.cs.algs4.In;
  *  <p>
  *  This implementation is part of the investigation into Scale-Free Networks
  *  using the SNAP dataset. It emphasizes manual algorithm verification 
- *  over library-ready solutions for educational purposes.
+ *  over library-ready solutions for educational purposes, avoiding built-in
+ *  methods like {@code G.degree(v)} or {@code G.isBipartite()}.
  *  <p>
  *  For additional documentation, see 
  *  <a href="https://algs4.cs.princeton.edu/41graph">Section 4.1</a> 
@@ -81,81 +80,75 @@ public class FacebookGraph {
     /**
      * Returns the graph density.
      * The density is the ratio of edges to the maximum possible edges.
+     * Uses the formula: 2E / (V * (V - 1)) for undirected graphs.
      *
      * @return the density as a double between 0 and 1
      */
     public double density() {
-    int V = G.V();
-    int E = G.E();
-    
-    if (V <= 1) return 0.0;
-    
-    return (2.0 * E) / (V * (V - 1));
+        int V = G.V();
+        int E = G.E();
+        
+        if (V <= 1) return 0.0;
+        
+        return (2.0 * E) / (V * (V - 1));
     }
 
     /**
      * Returns the maximum degree in the graph.
+     * Calculated by manually iterating through the adjacency lists.
      * Runs in &Theta;(V + E) time.
      *
      * @return the maximum degree
      */
     public int maxDegree() {
-    int max = 0;
-
-    for (int v = 0; v < G.V(); v++) {
-        int degree = 0;
-        for (int w : G.adj(v)) {
-            degree++;
+        int max = 0;
+        for (int v = 0; v < G.V(); v++) {
+            int degree = 0;
+            for (int w : G.adj(v)) {
+                degree++;
+            }
+            if (degree > max) max = degree;
         }
-        if (degree > max) {
-            max = degree;
-        }
-    }
-    return max;
+        return max;
     }
 
     /**
      * Returns the minimum degree in the graph.
+     * Calculated by manually iterating through the adjacency lists.
      * Runs in &Theta;(V + E) time.
      *
      * @return the minimum degree
      */
     public int minDegree() {
-    if (G.V() == 0) return 0;
+        if (G.V() == 0) return 0;
 
-    int min = Integer.MAX_VALUE;
-
-    for (int v = 0; v < G.V(); v++) {
-        int degree = 0;
-        for (int w : G.adj(v)) {
-            degree++;
+        int min = Integer.MAX_VALUE;
+        for (int v = 0; v < G.V(); v++) {
+            int degree = 0;
+            for (int w : G.adj(v)) {
+                degree++;
+            }
+            if (degree < min) min = degree;
         }
-        if (degree < min) {
-            min = degree;
-        }
-    }
-    return min;
+        return min;
     }
 
     /**
      * Returns the average degree of the vertices.
+     * Calculated by manually summing the degrees of all vertices.
      *
      * @return the average degree
      */
     public double avgDegree() {
-    if (G.V() == 0) return 0.0;
+        if (G.V() == 0) return 0.0;
 
-    int totalDegree = 0;
-
-    for (int v = 0; v < G.V(); v++) {
-        int degree = 0;
-        for (int w : G.adj(v)) {
-            degree++;
+        int totalDegree = 0;
+        for (int v = 0; v < G.V(); v++) {
+            for (int w : G.adj(v)) {
+                totalDegree++;
+            }
         }
-        totalDegree += degree;
-    }
-
-    return (double) totalDegree / G.V();
+        return (double) totalDegree / G.V();
     }
 
     /**
@@ -164,13 +157,16 @@ public class FacebookGraph {
      *
      * @return the array of lists
      */
+    @SuppressWarnings("unchecked")
     public List<Integer>[] toAdjacencyList() {
-        return IntStream.range(0, G.V())
-                .mapToObj(v -> {
-                    List<Integer> neighbors = new ArrayList<>();
-                    G.adj(v).forEach(neighbors::add);
-                    return neighbors;
-                }).toArray(List[]::new);
+        List<Integer>[] adj = (List<Integer>[]) new ArrayList[G.V()];
+        for (int v = 0; v < G.V(); v++) {
+            adj[v] = new ArrayList<>();
+            for (int w : G.adj(v)) {
+                adj[v].add(w);
+            }
+        }
+        return adj;
     }
 
     /**
@@ -192,7 +188,7 @@ public class FacebookGraph {
 
     /**
      * Returns a bit-compressed adjacency matrix.
-     * Uses &Theta;(V^2 / 8) bytes of memory.
+     * Uses &Theta;(V^2 / 8) bytes of memory via {@link BitSet}.
      *
      * @return the BitSet representation
      */
@@ -214,16 +210,16 @@ public class FacebookGraph {
      * @return the boolean incidence matrix
      */
     public boolean[][] toIncidenceMatrix() {
-         final int v = G.V();
-         final int e = G.E();
-         boolean[][] matrix = new boolean[v][e];
-         int edgeIndex = 0;
-         for (int i = 0; i < v; i++) {
-             for (int w : G.adj(i)) {
-                 if (i < w) {
-                     matrix[i][edgeIndex] = true;
-                     matrix[w][edgeIndex] = true;
-                     edgeIndex++;
+        final int v = G.V();
+        final int e = G.E();
+        boolean[][] matrix = new boolean[v][e];
+        int edgeIndex = 0;
+        for (int i = 0; i < v; i++) {
+            for (int w : G.adj(i)) {
+                if (i < w) {
+                    matrix[i][edgeIndex] = true;
+                    matrix[w][edgeIndex] = true;
+                    edgeIndex++;
                 }
             }
         }
@@ -253,22 +249,30 @@ public class FacebookGraph {
     /**
      * Converts the graph to CSR (Compressed Sparse Row) format.
      *
-     * @param  isDirected true if the graph should be treated as directed
+     * @param  isDirected true if the graph should be treated as directed (E entries),
+     *                    false for undirected (2E entries).
      * @return the CSR data structure
      */
     public CRSData toCRS(boolean isDirected) {
-        final int[] edges = isDirected ? new int[G.E()] : new int[2 * G.E()];
+        int totalEntries = isDirected ? G.E() : 2 * G.E();
+        final int[] edges = new int[totalEntries];
         final int[] offsets = new int[G.V() + 1];
 
         offsets[0] = 0;
         for (int v = 0; v < G.V(); v++) {
-            offsets[v + 1] = offsets[v] + G.degree(v);
+            int count = 0;
+            for (int w : G.adj(v)) {
+                if (!isDirected || v < w) count++;
+            }
+            offsets[v + 1] = offsets[v] + count;
         }
 
         int current = 0;
         for (int v = 0; v < G.V(); v++) {
             for (int w : G.adj(v)) {
-                edges[current++] = w;
+                if (!isDirected || v < w) {
+                    edges[current++] = w;
+                }
             }
         }
         return new CRSData(edges, offsets);
@@ -276,7 +280,7 @@ public class FacebookGraph {
 
     /**
      * Returns the number of connected components in the graph.
-     * Implementation uses iterative depth-first search.
+     * Implementation uses manual iterative depth-first search to avoid stack overflow.
      *
      * @return the number of connected components
      */
@@ -294,7 +298,7 @@ public class FacebookGraph {
 
     /**
      * Returns true if the graph is bipartite.
-     * Uses a manual two-coloring algorithm via DFS.
+     * Uses a manual two-coloring algorithm via iterative DFS to avoid stack overflow.
      *
      * @return {@code true} if bipartite; {@code false} otherwise
      */
@@ -302,11 +306,35 @@ public class FacebookGraph {
         int V = G.V();
         boolean[] marked = new boolean[V];
         boolean[] color = new boolean[V];
-        return IntStream.range(0, V)
-            .filter(v -> !marked[v])
-            .allMatch(v -> checkBipartite(v, marked, color));
+        
+        for (int s = 0; s < V; s++) {
+            if (!marked[s]) {
+                Stack<Integer> stack = new Stack<>();
+                stack.push(s);
+                marked[s] = true;
+                while (!stack.isEmpty()) {
+                    int v = stack.pop();
+                    for (int w : G.adj(v)) {
+                        if (!marked[w]) {
+                            marked[w] = true;
+                            color[w] = !color[v];
+                            stack.push(w);
+                        } else if (color[w] == color[v]) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
+    /**
+     * Performs a manual iterative depth-first search from a starting node.
+     *
+     * @param startNode the vertex to start the DFS from
+     * @param visited   the BitSet tracking visited vertices
+     */
     private void dfs_iterative(int startNode, BitSet visited) {
         Stack<Integer> stack = new Stack<>();
         stack.push(startNode);
@@ -314,23 +342,13 @@ public class FacebookGraph {
             int v = stack.pop();
             if (!visited.get(v)) {
                 visited.set(v);
-                StreamSupport.stream(G.adj(v).spliterator(), false)
-                    .filter(w -> !visited.get(w))
-                    .forEach(stack::push);
+                for (int w : G.adj(v)) {
+                    if (!visited.get(w)) {
+                        stack.push(w);
+                    }
+                }
             }
         }
-    }
-
-    private boolean checkBipartite(int v, boolean[] marked, boolean[] color) {
-        marked[v] = true;
-        return StreamSupport.stream(G.adj(v).spliterator(), false)
-            .allMatch(w -> {
-                if (!marked[w]) {
-                    color[w] = !color[v];
-                    return checkBipartite(w, marked, color);
-                } 
-                return color[w] != color[v];
-            });
     }
 
     /**
@@ -342,5 +360,4 @@ public class FacebookGraph {
     public Iterable<Integer> adj(int v) {
         return G.adj(v);
     }
-
 }
