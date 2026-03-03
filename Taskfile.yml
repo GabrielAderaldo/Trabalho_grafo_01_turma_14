@@ -8,69 +8,69 @@ vars:
   ALGS4_CLASSES_DIR: "{{.BUILD_DIR}}/algs4-classes"
   JAVA: java
   JAVAC: javac
-  # Ajuste do Classpath para lidar com aspas em diferentes shells
-  CP: "{{.ALGS4_CLASSES_DIR}}:{{.CLASSES_DIR}}"
+  # No Windows o separador do Classpath PRECISA ser ";"
+  CP: "{{.ALGS4_CLASSES_DIR}};{{.CLASSES_DIR}}"
 
 tasks:
   setup:
-    desc: "Compila a biblioteca algs4 para build/algs4-classes"
+    desc: "Compila a biblioteca algs4 para build/algs4-classes (Windows)"
     cmds:
-      - mkdir -p "{{.ALGS4_CLASSES_DIR}}"
-      - find "{{.ALGS4_SRC_DIR}}" -type f -name "*.java" | xargs {{.JAVAC}} -d "{{.ALGS4_CLASSES_DIR}}"
+      - powershell -Command "New-Item -ItemType Directory -Force '{{.ALGS4_CLASSES_DIR}}' | Out-Null"
+      - powershell -Command "javac -d '{{.ALGS4_CLASSES_DIR}}' (Get-ChildItem -Recurse '{{.ALGS4_SRC_DIR}}/*.java').FullName"
     status:
-      - test -d "{{.ALGS4_CLASSES_DIR}}"
+      - powershell -Command "if (!(Test-Path '{{.ALGS4_CLASSES_DIR}}')) { exit 1 }"
 
   classes:
-    desc: "Compila o código Java do projeto"
+    desc: "Compila o código Java do projeto (Windows)"
     deps: [setup]
     cmds:
-      - mkdir -p "{{.CLASSES_DIR}}"
-      - "{{.JAVAC}} -cp {{.ALGS4_CLASSES_DIR}} -d {{.CLASSES_DIR}} $(find {{.SRC_DIR}} -name '*.java')"
+      - powershell -Command "New-Item -ItemType Directory -Force '{{.CLASSES_DIR}}' | Out-Null"
+      - powershell -Command "javac -cp '{{.ALGS4_CLASSES_DIR}}' -d '{{.CLASSES_DIR}}' (Get-ChildItem -Recurse '{{.SRC_DIR}}/*.java').FullName"
 
   generate:
     desc: "Gera o dataset unificado do Facebook (facebook_union.txt)"
     deps: [classes]
     cmds:
       - echo ">>> Iniciando geração do dataset..."
-      - "{{.JAVA}} -cp {{.CP}} utils.EdgeListConverter"
+      - "{{.JAVA}} -cp \"{{.CP}}\" utils.EdgeListConverter"
 
   run-full:
     desc: "Executa a análise completa e GERA TODOS OS ARTEFATOS (Binários, CSV, JSON) para o Notebook"
     deps: [classes]
     cmds:
       - echo ">>> Executando Análise Completa e Gerando Dados..."
-      - "{{.JAVA}} -Xmx2G -cp {{.CP}} app.Main"
+      - "{{.JAVA}} -Xmx2G -cp \"{{.CP}}\" app.Main"
 
   test-notebook:
     desc: "Executa os testes do gerador de dados para o Notebook"
     deps: [classes]
     cmds:
-      - "{{.JAVA}} -cp {{.CP}} tests.NotebookDataGeneratorTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.NotebookDataGeneratorTest"
 
   test-all:
     desc: "Executa a suíte completa de 18 testes unitários"
     deps: [classes]
     cmds:
-      - "{{.JAVA}} -cp {{.CP}} tests.DegreeStatsTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.ConnectivityTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.BipartiteTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.AdjListTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.AdjacencyMatrixTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.IncidenceMatrixTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.EdgeListTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.CSRTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.AdjMatrixBinaryTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.IncidenceBinaryTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.EdgeListBinaryTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.RawDegreeExportTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.DataExporterTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.GraphAnalysisTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.NeighborhoodTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.UnionFileTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.NotebookDataGeneratorTest"
-      - "{{.JAVA}} -cp {{.CP}} tests.EdgeListConverterTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.DegreeStatsTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.ConnectivityTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.BipartiteTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.AdjListTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.AdjacencyMatrixTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.IncidenceMatrixTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.EdgeListTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.CSRTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.AdjMatrixBinaryTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.IncidenceBinaryTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.EdgeListBinaryTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.RawDegreeExportTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.DataExporterTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.GraphAnalysisTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.NeighborhoodTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.UnionFileTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.NotebookDataGeneratorTest"
+      - "{{.JAVA}} -cp \"{{.CP}}\" tests.EdgeListConverterTest"
 
   clean:
-    desc: "Remove a pasta build/"
+    desc: "Remove a pasta build/ (Windows)"
     cmds:
-      - rm -rf "{{.BUILD_DIR}}"
+      - powershell -Command "if (Test-Path '{{.BUILD_DIR}}') { Remove-Item -Recurse -Force '{{.BUILD_DIR}}' }"
