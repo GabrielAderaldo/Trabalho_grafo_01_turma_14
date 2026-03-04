@@ -352,6 +352,46 @@ public class FacebookGraph {
     }
 
     /**
+     * Calculates the average clustering coefficient of the graph.
+     * The clustering coefficient of a vertex measures how close its neighbors are to being a clique.
+     * Calculated as the average of the local clustering coefficients of all vertices.
+     * 
+     * Runs in &Theta;(V * k^2) where k is the average degree.
+     *
+     * @return the average clustering coefficient as a double between 0 and 1
+     */
+    public double avgClusteringCoefficient() {
+        if (this.G.V() == 0) return 0.0;
+
+        // Utilizamos o BitSet para busca rápida O(1) de existência de arestas
+        BitSet adjMatrix = this.toAdjacencyBitSet();
+        double totalClusteringCoefficient = 0.0;
+        int V = this.G.V();
+        
+        for (int v = 0; v < V; v++) {
+            List<Integer> neighbors = new ArrayList<>();
+            for (int w : G.adj(v)) neighbors.add(w);
+            
+            int k = neighbors.size();
+            if (k < 2) continue;
+            
+            int edgesBetweenNeighbors = 0;
+            for (int i = 0; i < k; i++) {
+                for (int j = i + 1; j < k; j++) {
+                    // Verifica se existe aresta entre o vizinho i e o vizinho j
+                    if (adjMatrix.get(neighbors.get(i) * V + neighbors.get(j))) {
+                        edgesBetweenNeighbors++;
+                    }
+                }
+            }
+            
+            double clusteringCoefficient = (2.0 * edgesBetweenNeighbors) / (k * (k - 1));
+            totalClusteringCoefficient += clusteringCoefficient;
+        }
+        return totalClusteringCoefficient / V;
+    }
+
+    /**
      * Returns the vertices adjacent to vertex {@code v}.
      *
      * @param  v the vertex

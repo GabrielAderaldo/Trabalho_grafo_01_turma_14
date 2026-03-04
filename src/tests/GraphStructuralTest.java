@@ -75,11 +75,23 @@ public class GraphStructuralTest {
             success = false;
         }
 
+        // 5. Validação de Clustering (Usando um triângulo perfeito K3)
+        Graph K3 = new Graph(3);
+        K3.addEdge(0, 1); K3.addEdge(1, 2); K3.addEdge(2, 0);
+        FacebookGraph fbK3 = new FacebookGraph(K3);
+        double clustering = fbK3.avgClusteringCoefficient();
+        
+        if (Math.abs(clustering - 1.0) > 1e-10) {
+            System.err.println("FALHA: Coeficiente de Clustering para K3 deveria ser 1.0, obtido: " + clustering);
+            success = false;
+        }
+
         // Resultado Final
         if (success) {
             System.out.println(">>> [OK] GraphStructuralTest PASSOU!");
             System.out.println("    V: " + fb.V() + ", E: " + fb.E() + ", Densidade: " + fb.density());
             System.out.println("    Grau Max: " + fb.maxDegree() + ", Min: " + fb.minDegree() + ", Médio: " + fb.avgDegree());
+            System.out.println("    Clustering (K3): " + clustering);
         } else {
             System.err.println(">>> [ERRO] GraphStructuralTest FALHOU!");
             System.exit(1);

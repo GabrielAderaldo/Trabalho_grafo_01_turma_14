@@ -51,12 +51,11 @@ public class Main {
             System.out.println("CONCLUÍDO");
 
             // 4. Exportação Global de Métricas (JSON para o Colab)
-            // Estendendo o que o NotebookDataGenerator já faz
             System.out.print(">>> Gerando artefatos binários e relatórios... ");
             NotebookDataGenerator.generateAll(fb, outputPrefix);
             
-            // Adicionando métricas extras que calculamos aqui ao JSON de métricas
-            updateGlobalMetrics(outputPrefix, components, isBipartite);
+            // Adicionando métricas extras que calculamos aqui ao JSON de topologia
+            updateGlobalMetrics(outputPrefix, components, isBipartite, fb.avgClusteringCoefficient());
             System.out.println("CONCLUÍDO");
 
             // 5. Relatório Final de Artefatos
@@ -72,15 +71,13 @@ public class Main {
     }
 
     /**
-     * Atualiza o arquivo de métricas JSON com dados adicionais de algoritmos de busca.
+     * Atualiza o arquivo de métricas JSON com dados adicionais de algoritmos de busca e clustering.
      */
-    private static void updateGlobalMetrics(String prefix, int components, boolean isBipartite) {
-        // Como o NotebookDataGenerator já criou o arquivo, aqui poderíamos 
-        // ou refatorar lá ou apenas adicionar as novas métricas em um mapa separado.
-        // Vamos gerar um arquivo de topologia específico.
+    private static void updateGlobalMetrics(String prefix, int components, boolean isBipartite, double avgClustering) {
         Map<String, Object> topo = new HashMap<>();
         topo.put("connected_components", components);
         topo.put("is_bipartite", isBipartite);
+        topo.put("avg_clustering_coefficient", String.format(java.util.Locale.US, "%.6f", avgClustering));
         DataExporter.toJSON(prefix + "_topology", topo);
     }
 
